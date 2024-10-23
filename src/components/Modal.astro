@@ -1,0 +1,42 @@
+---
+export interface ModalProps {
+    title: string;
+    description: string;
+    songDetails: string;
+    embedUrl: string;
+    colorTheme?: string; // Optional, defaults to a specific color
+}
+
+const { title, songDetails, embedUrl, colorTheme = '#4a90e2', description } = Astro.props as ModalProps;
+let isVisible = false; // By default, the modal is hidden
+
+function showModal() {
+    isVisible = true;
+}
+
+function closeModal() {
+    isVisible = false;
+}
+---
+
+<div class={`modal-container ${isVisible ? '' : 'hidden'}`}>
+        <div class="modal-header">
+            <h2 class="text-2xl font-bold text-black">{title}</h2>
+            <h3 class="text-lg text-gray-300">{description}</h3>
+        </div>
+        <div class="modal-body">
+            <p>{songDetails}</p>
+            <iframe class="embed" src={embedUrl} allow="autoplay; encrypted-media"></iframe>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+    function showModal() {
+        document.getElementById('song-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('song-modal').classList.add('hidden');
+    }
+</script>
