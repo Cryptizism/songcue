@@ -13,7 +13,7 @@ const { playlistName, playlistId, playlistImage } = Astro.props;
 	<a href={`./playlist/${playlistId}`}>
 		<img class="w-64 h-64 bg-cover bg-center block" src={playlistImage}/>
 	</a>
-	<div class="absolute w-64 bottom-0 left-0 p-4 pt-0 text-white transition-transform transform translate-y-12 group-hover:translate-y-0 flex justify-between">
+	<div class="absolute w-64 bottom-0 left-0 p-4 pt-0 text-white transition-transform transform translate-y-full group-hover:translate-y-0 flex justify-between">
 		<h3 class="text-lg font-semibold cursor-default">{playlistName}</h3>		  
 	</div>
 	</div>
