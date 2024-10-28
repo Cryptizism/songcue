@@ -88,7 +88,9 @@ const { playlist, allSongs } = Astro.props as Props;
                 <p class="text-gray-700 mb-4"></p>
                 <iframe class="w-full h-24 rounded-md" id="modal-embed" src="" allowfullscreen="" allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 
-                <div class="flex justify-center">
+                <div class="flex justify-center gap-2">
+                    <button class="p-2 bg-blue-700 text-white rounded-lg" onclick="document.getElementById('modal').classList.add('hidden')">Close</button>
+                    <a href={"/playlist/" + playlist.id + "?infinite"} class="p-2 bg-blue-700 text-white rounded-lg">Infinite Mode</a>
                     <a href="/" class="p-2 bg-blue-700 text-white rounded-lg">Return Home</a>
                 </div>
             </div>
@@ -98,6 +100,11 @@ const { playlist, allSongs } = Astro.props as Props;
     </main>
 
     <script defer define:vars={{allSongs, playlist}} >
+        const searchParams = new URLSearchParams(window.location.search);
+        
+        let isInfinite = searchParams.has('infinite');
+
+
         let attempts = 0;
         let songPlaying = false;
 
@@ -106,6 +113,9 @@ const { playlist, allSongs } = Astro.props as Props;
         const randomSongString = `${randomSong.title} - ${randomSong.artists}`;
 
         function getRandomSongIndex(songCount) {
+            if (isInfinite) {
+                return Math.floor(Math.random() * songCount);
+            }
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 0);
             const diff = now.getTime() - start.getTime();
@@ -145,6 +155,16 @@ const { playlist, allSongs } = Astro.props as Props;
             document.getElementById('song-audio').load();
             document.getElementById('modal-embed').src = randomSong.embedUrl;
 
+            const savedVolume = getCookie('volume');
+            if (savedVolume) {
+                document.getElementById('song-audio').volume = savedVolume;
+                document.querySelector('input[type="range"]').value = savedVolume;
+            }
+
+            if (isInfinite) {
+                return;
+            }
+
             const savedGuesses = getGuessesFromCookie();
             attempts = savedGuesses.length;
 
@@ -167,12 +187,6 @@ const { playlist, allSongs } = Astro.props as Props;
                 document.getElementById('modal').classList.remove('hidden');
                 document.getElementById('modal-title').innerText = 'You lowkey flopped...';
                 document.getElementById('modal-description').innerText = 'You didn\'t seem to get the right song, you shouldn\'t persue a career in music';
-            }
-
-            const savedVolume = getCookie('volume');
-            if (savedVolume) {
-                document.getElementById('song-audio').volume = savedVolume;
-                document.querySelector('input[type="range"]').value = savedVolume;
             }
 
             disablePreviousInputs();
@@ -234,10 +248,12 @@ const { playlist, allSongs } = Astro.props as Props;
         document.querySelectorAll('.guess-skip').forEach((button, index) => {
             button.addEventListener('click', () => {
                 const savedGuesses = getGuessesFromCookie();
-                savedGuesses.push('');
+                savedGuesses.push('Skipped');
                 saveGuessesToCookie(savedGuesses);
 
                 button.parentElement.classList.add('!bg-red-200');
+
+                button.parentElement.querySelector('.guess-input').value = 'Skipped';
 
                 attempts++;
                 songPlaying = false;
