@@ -7,6 +7,10 @@ const playlists = await getCollection('playlists')
 ---
 <Layout title="Home">
 	<main>
+		<!-- Create a banner that is red and displays example warning text using tailwind -->
+		<div class="bg-red-500 text-white text-center">
+			<p class="text-lg"><span class="font-bold">PUBLIC ANNOUNCEMENT:</span> Spotify has stopped provididng the data we use, Songcue may be shutting down but will be re-released with profiles and friend stats!<br/>Progress and updates here: <a target="_blank" href="https://twitter.com/cryptizism" class="text-blue-500 hover:text-blue-700 hover:underline">@Cryptizism</a></p>
+		</div>
 		<ul class="flex flex-wrap justify-center gap-8 w-80vw mx-auto my-4">
 			{
 				playlists.map((playlist) => (
